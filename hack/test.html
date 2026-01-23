@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S E N T I N E L</title>
+    <style>
+        /* --- CSS RESET & THEME --- */
+        :root {
+            --bg-color: #050505;
+            --term-color: #00f3ff; /* Cyber Cyan */
+            --term-dim: #005f63;
+            --scanline-color: rgba(0, 255, 255, 0.05);
+            --glow: 0 0 10px rgba(0, 243, 255, 0.6), 0 0 20px rgba(0, 243, 255, 0.3);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            color: var(--term-color);
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: crosshair;
+        }
+
+        /* --- THE EYES CONTAINER --- */
+        .face-container {
+            display: flex;
+            gap: 60px; /* Space between eyes */
+            position: relative;
+            z-index: 2;
+            transform: scale(1.2); /* Adjust overall size here */
+        }
+
+        /* --- INDIVIDUAL EYE STRUCTURE --- */
+        .eye-socket {
+            position: relative;
+            font-size: 14px;
+            line-height: 14px;
+            white-space: pre; /* Essential for ASCII art alignment */
+            font-weight: bold;
+            text-shadow: var(--glow);
+            user-select: none;
+            pointer-events: none;
+        }
+
+        /* The static outer frame of the eye */
+        .sclera {
+            color: var(--term-color);
+        }
+
+        /* The moving pupil container */
+        .pupil-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: visible;
+        }
+
+        /* The actual ASCII art for the pupil */
+        .pupil {
+            color: #fff; /* White center for contrast */
+            text-shadow: 0 0 15px var(--term-color);
+            background: rgba(0,0,0,0.5); /* Slight backing to obscure lines behind it */
+            will-change: transform;
+            text-align: center;
+            /* Center the pupil anchor point */
+            transform-origin: center center; 
+        }
+
+        /* --- VIGNETTE & SCANLINES (Visual Polish) --- */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+            background-size: 100% 4px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle, transparent 60%, black 100%);
+            z-index: 9;
+            pointer-events: none;
+        }
+
+        /* --- BOTTOM STATUS TEXT --- */
+        .status {
+            margin-top: 60px;
+            text-align: center;
+            opacity: 0.7;
+            text-shadow: var(--glow);
+            letter-spacing: 2px;
+            font-size: 12px;
+        }
+        
+        .blink { animation: blinker 2s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+
+    </style>
+</head>
+<body>
+
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+
+    <div class="face-container">
+        
+        <div class="eye-socket">
+            <div class="sclera">
+  ,–—––––––––––––––––––––––––––––—–.
+ //                                \\
+||                                  ||
+||                                  ||
+||                                  ||
+||                                  ||
+ \\                                //
+  '–—––––––––––––––––––––––––––––—–'
+            </div>
+            
+            <div class="pupil-layer">
+                <div class="pupil" id="eye-left">
+ .–. 
+( + )
+ `–' 
+                </div>
+            </div>
+        </div>
+
+        <div class="eye-socket">
+            <div class="sclera">
+  ,–—––––––––––––––––––––––––––––—–.
+ //                                \\
+||                                  ||
+||                                  ||
+||                                  ||
+||                                  ||
+ \\                                //
+  '–—––––––––––––––––––––––––––––—–'
+            </div>
+
+            <div class="pupil-layer">
+                <div class="pupil" id="eye-right">
+ .–. 
+( + )
+ `–' 
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="status">
+        <span class="blink">TARGET ACQUIRED</span><br>
+        COORDINATES TRACKING
+    </div>
+
+    <script>
+        // CONFIGURATION
+        // How many pixels can the pupil move horizontally?
+        const MAX_MOVE_X = 65; 
+        // How many pixels can the pupil move vertically? (Eyes are wider than tall)
+        const MAX_MOVE_Y = 25; 
+
+        const leftPupil = document.getElementById('eye-left');
+        const rightPupil = document.getElementById('eye-right');
+
+        /**
+         * Calculates the pupil position based on mouse coordinates.
+         * Uses elliptical logic so movement matches the wide eye shape.
+         */
+        function updateEye(eyeElement, mouseX, mouseY) {
+            // Get the bounding box of the eye's container (the .pupil-layer)
+            // This is our anchor point (center of the eye socket)
+            const rect = eyeElement.parentElement.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            // Calculate raw distance from center
+            const deltaX = mouseX - centerX;
+            const deltaY = mouseY - centerY;
+
+            // Calculate angle
+            const angle = Math.atan2(deltaY, deltaX);
+
+            // Calculate distance strength (0 to 1)
+            // We clamp the distance so the eye stops tracking if mouse is far away
+            // (Creates a more realistic "looking at max range" effect)
+            const dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            // The 300 divider controls how "sensitive" the eye is to distance.
+            // Lower number = eye reaches edge faster.
+            const distanceStrength = Math.min(dist / 300, 1); 
+
+            // Calculate new positions using elliptical coordinates
+            // cos(angle) * max_x * strength
+            const moveX = Math.cos(angle) * MAX_MOVE_X * distanceStrength;
+            const moveY = Math.sin(angle) * MAX_MOVE_Y * distanceStrength;
+
+            // Apply transform
+            eyeElement.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        }
+
+        // Event Listener for Mouse Movement
+        document.addEventListener('mousemove', (e) => {
+            // Use requestAnimationFrame for smooth 60fps performance
+            requestAnimationFrame(() => {
+                updateEye(leftPupil, e.clientX, e.clientY);
+                updateEye(rightPupil, e.clientX, e.clientY);
+            });
+        });
+
+        // Optional: Reset eyes if mouse leaves the window
+        document.addEventListener('mouseleave', () => {
+            leftPupil.style.transform = 'translate(0,0)';
+            rightPupil.style.transform = 'translate(0,0)';
+        });
+
+    </script>
+</body>
+</html>

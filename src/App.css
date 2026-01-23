@@ -1,0 +1,77 @@
+.shell {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 18px 18px 52px;
+}
+
+/* .header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  display: flex;
+  flex-direction: row;
+  align-items: end;
+  gap: 10px;
+  margin-left: 10px;
+}
+
+.content {
+  margin: 10px auto 0;
+  min-height: 100vh;
+  max-width: 75vw;
+}
+
+.connect-section {
+  display: flex;
+  flex-direction: row;
+  align-items: end;
+  gap: 10px;
+}
+
+.about {
+  margin-right: 50px;
+}
+
+.about-link {
+  font-size: 1.2em
+}
+
+h1 { 
+  margin: 0;
+  font-size: 2em;
+}
+
+.logo {
+  width: 2em;
+  height: 2em;
+  opacity: 0.87;
+  align-self: center;
+}
+
+.connect-icon {
+  width: 2em;
+  height: 2em;
+  opacity: 0.87;
+}
+
+.connect-icon:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+  opacity: 1;
+}
+
+.about-link:hover {
+  color: white;
+  cursor: pointer;
+  font-size-adjust: .55;
+}
+
+.title:hover {
+  color: white;
+  opacity: 1;
+} */
+
