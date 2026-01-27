@@ -5,7 +5,9 @@ services:
       - "3000:3000"
     restart: unless-stopped
     networks:
-      - web
+      - edge
 
 networks:
-  web: {}
+  edge:
+    external: true
+    name: edge
