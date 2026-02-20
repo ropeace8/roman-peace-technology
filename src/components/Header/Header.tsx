@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
 
 import { FaLinkedin } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
@@ -7,13 +8,23 @@ import blogLogo from './blog_logo.png';
 import './Header.css';
 import { FiChevronDown } from "react-icons/fi";
 
-interface HeaderProps {
-    setPage: (postId: string) => void
-}
-
-function Header({ setPage }: HeaderProps) {
+function Header() {
     const [ isConnectOpen, setIsConnectOpen ] = useState(false);
     const [ isAvatarOpen, setIsAvatarOpen ] = useState(false);
+    const connectRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!isConnectOpen) return;
+
+        const handleClick = (e: MouseEvent) => {
+            if (connectRef.current && !connectRef.current.contains(e.target as Node)) {
+                setIsConnectOpen(false);
+            }
+        };
+
+        document.addEventListener("click", handleClick);
+        return () => document.removeEventListener("click", handleClick);
+    }, [isConnectOpen]);
 
     useEffect(() => {
         if (!isAvatarOpen) {
@@ -27,47 +38,44 @@ function Header({ setPage }: HeaderProps) {
             document.body.style.overflow = previousOverflow;
         };
     }, [isAvatarOpen]);
-    
+
     return (
         <>
             <header className='topbar'>
-                <a className="blog-brand">
+                <Link to="/" className="blog-brand">
                     <img className='blog-logo' src={blogLogo}></img>
                     <div className="blog-name">
                         <h1>Roman Peace Technology</h1>
                         <p>projects · notes · writing</p>
                     </div>
-                </a>
+                </Link>
 
                 <div className="header-links">
-                    <a 
-                        className="link" 
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setPage("about");
-                        }}
+                    <Link
+                        to="/about"
+                        className="link"
                     >
                         About
-                    </a>
+                    </Link>
 
-                    <a 
+                    <a
                         href="https://www.linkedin.com/in/roman-peace/"
                         target="_blank"
-                        className="link link-icon" 
+                        className="link link-icon"
                         aria-label="LinkedIn"
                     >
                         <FaLinkedin className="icon"/>
                     </a>
 
-                    <a 
+                    <a
                         href="mailto:romanpeace888@gmail.com"
-                        className="link link-icon" 
+                        className="link link-icon"
                         aria-label="Email"
                     >
                         <MdEmail className="icon"/>
                     </a>
-                    
-                    <div className="connect-wrap">
+
+                    <div className="connect-wrap" ref={connectRef}>
                         <button
                             type="button"
                             className={`link connect-toggle ${isConnectOpen ? "open" : ""}`}
@@ -77,12 +85,12 @@ function Header({ setPage }: HeaderProps) {
                         </button>
 
                         <div className={`connect-dropdown ${isConnectOpen ? "open" : ""}`}>
-                            <a 
+                            <a
                                 href="https://www.linkedin.com/in/roman-peace/"
                                 target="_blank"
                                 className="dropdown-item"
                             ><FaLinkedin className="icon"/></a>
-                            <a 
+                            <a
                                 href="mailto:romanpeace888@gmail.com"
                                 className="dropdown-item"><MdEmail className="icon"/></a>
                         </div>

@@ -8,11 +8,10 @@ import "./ProjectCard.css";
 
 interface ProjectCardProps {
   project: Project;
-  setPage: (postId: string) => void;
   posts: Post[];
 }
 
-function ProjectCard({ project, setPage, posts }: ProjectCardProps) {
+function ProjectCard({ project, posts }: ProjectCardProps) {
   const [isShowModal, setIsShowModal] = useState(false);
 
   const exitModal = () => {
@@ -34,7 +33,7 @@ function ProjectCard({ project, setPage, posts }: ProjectCardProps) {
         </div>
       </button>
 
-      {isShowModal ? <ProjectModal project={project} onExit={exitModal} setPage={setPage} posts={posts}/> : ""}
+      {isShowModal ? <ProjectModal project={project} onExit={exitModal} posts={posts}/> : ""}
     </>
   );
 }

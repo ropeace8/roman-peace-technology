@@ -9,11 +9,10 @@ import "./ProjectModal.css";
 interface ProjectModalProps {
     project: Project;
     onExit: () => void;
-    setPage: (postId: string) => void;
     posts: Post[];
 }
 
-function ProjectModal({ project, onExit, setPage, posts }: ProjectModalProps) {
+function ProjectModal({ project, onExit, posts }: ProjectModalProps) {
     useEffect(() => {
         const { body } = document;
         const previousOverflow = body.style.overflow;
@@ -50,7 +49,7 @@ function ProjectModal({ project, onExit, setPage, posts }: ProjectModalProps) {
                 <div className="project-modal-body">
                     <section className="project-modal-grid" aria-label="Project posts">
                         {postsInProject.map(post => (
-                            <PostCard key={post.id} post={post} setPage={setPage}/>
+                            <PostCard key={post.id} post={post}/>
                         ))}
                     </section>
                 </div>

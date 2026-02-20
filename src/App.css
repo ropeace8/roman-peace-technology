@@ -4,6 +4,25 @@
   padding: 18px 18px 52px;
 }
 
+.not-found {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.not-found h1 {
+  font-size: 4rem;
+  margin: 0 0 8px;
+}
+
+.not-found p {
+  margin: 0 0 24px;
+  opacity: 0.7;
+}
+
+.not-found a {
+  color: var(--accent);
+}
+
 /* .header {
   display: flex;
   flex-direction: row;

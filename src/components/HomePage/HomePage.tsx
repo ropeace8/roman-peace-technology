@@ -9,12 +9,11 @@ import type { Post, Project } from "../../model";
 import './HomePage.css';
 
 interface HomePageProps {
-    setPage: (postId: string) => void;
     posts: Post[];
     projects: Project[];
 }
 
-function HomePage({ setPage, posts, projects }: HomePageProps ) {
+function HomePage({ posts, projects }: HomePageProps ) {
     const [isAllPosts, setIsAllPosts] = useState(true);
 
     const getPostView = () => {
@@ -24,7 +23,7 @@ function HomePage({ setPage, posts, projects }: HomePageProps ) {
                     .slice()
                     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
                     .map(post => {
-                        return <PostCard key={post.id} post={post} setPage={setPage}/>
+                        return <PostCard key={post.id} post={post}/>
                     })
             );
         } else {
@@ -32,7 +31,7 @@ function HomePage({ setPage, posts, projects }: HomePageProps ) {
                 projects
                     .slice()
                     .map(project => {
-                        return <ProjectCard key={project.id} project={project} setPage={setPage} posts={posts}/>
+                        return <ProjectCard key={project.id} project={project} posts={posts}/>
                     })
             );
         }

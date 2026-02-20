@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import ReactMarkdown from "react-markdown";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
@@ -11,11 +12,10 @@ import "./BlogArticle.css"
 
 interface BlogPageProps {
     postId: string;
-    setPage: (postId: string) => void;
     posts: Post[];
 }
 
-function BlogPage({ postId, setPage, posts }: BlogPageProps) {
+function BlogPage({ postId, posts }: BlogPageProps) {
     const [blogMarkdown, setBlogMarkdown] = useState<string | null>(null);
 
     const isAboutPage = postId === "about";
@@ -24,6 +24,7 @@ function BlogPage({ postId, setPage, posts }: BlogPageProps) {
     const blogContentFilename = isAboutPage ? "about.md" : `${post?.id}.md`;
 
     useEffect(() => {
+        setBlogMarkdown(null);
         fetch(getMarkdownUrl(blogContentFilename))
             .then(res => res.text())
             .then(setBlogMarkdown);
@@ -37,26 +38,26 @@ function BlogPage({ postId, setPage, posts }: BlogPageProps) {
     if (blogMarkdown === null) {
         return (
             <div className="blog-page">
-                <button
+                <Link
+                    to="/"
                     className="blog-back"
-                    onClick={() => setPage("home")}
                     aria-label="Back to home"
                 >
                     <IoMdArrowRoundBack className="icon"/>
-                </button>
+                </Link>
             </div>
         );
     }
 
     return (
         <div className="blog-page">
-            <button
+            <Link
+                to="/"
                 className="blog-back"
-                onClick={() => setPage("home")}
                 aria-label="Back to home"
             >
                 <IoMdArrowRoundBack className="icon"/>
-            </button>
+            </Link>
 
             <article className="blog-article-card">
                 {!isAboutPage && post && (

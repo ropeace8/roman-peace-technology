@@ -10,6 +10,7 @@ lerna-debug.log*
 .env
 node_modules
 dist
+src/routeTree.gen.ts
 dist-ssr
 *.local
 

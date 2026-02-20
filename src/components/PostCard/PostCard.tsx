@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import type { Post } from "../../model";
 import { getPostThumbnailUrl } from "../../content";
 
@@ -5,17 +6,14 @@ import "./PostCard.css";
 
 interface PostCardProps {
   post: Post;
-  setPage: (postId: string) => void;
 }
 
-function PostCard({ post, setPage }: PostCardProps) {
+function PostCard({ post }: PostCardProps) {
   return (
-    <a
+    <Link
+      to="/posts/$postId"
+      params={{ postId: post.id }}
       className="post-card"
-      onClick={(e) => {
-        e.preventDefault();
-        setPage(post.id);
-      }}
     >
       <div className="post-thumb">
         <img src={getPostThumbnailUrl(post.thumbnail)} alt={post.title} />
@@ -25,7 +23,7 @@ function PostCard({ post, setPage }: PostCardProps) {
         <h3 className="post-title">{post.title}</h3>
         <div className="post-date">{post.date}</div>
       </div>
-    </a>
+    </Link>
   );
 }
 
