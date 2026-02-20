@@ -1,5 +1,6 @@
 services:
   blog-app:
+    container_name: blog
     build: .
     ports:
       - "3000:3000"
