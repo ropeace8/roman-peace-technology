@@ -4,7 +4,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ../rpt-content:/usr/share/nginx/content:ro
+      - ${CONTENT_DIR}:/usr/share/nginx/content:ro
     restart: unless-stopped
     networks:
       - edge
