@@ -4,16 +4,17 @@ import Hero from '../Hero/Hero';
 import PostCard from '../PostCard/PostCard';
 import ProjectCard from '../ProjectCard/ProjectCard';
 
-import posts from "../../posts/posts.json";
-import projects from "../../posts/projects.json"
+import type { Post, Project } from "../../model";
 
 import './HomePage.css';
 
 interface HomePageProps {
     setPage: (postId: string) => void;
+    posts: Post[];
+    projects: Project[];
 }
 
-function HomePage({ setPage }: HomePageProps ) {
+function HomePage({ setPage, posts, projects }: HomePageProps ) {
     const [isAllPosts, setIsAllPosts] = useState(true);
 
     const getPostView = () => {
@@ -23,7 +24,7 @@ function HomePage({ setPage }: HomePageProps ) {
                     .slice()
                     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
                     .map(post => {
-                        return <PostCard key={post.id} post={post} setPage={setPage}/> 
+                        return <PostCard key={post.id} post={post} setPage={setPage}/>
                     })
             );
         } else {
@@ -31,7 +32,7 @@ function HomePage({ setPage }: HomePageProps ) {
                 projects
                     .slice()
                     .map(project => {
-                        return <ProjectCard key={project.id} project={project} setPage={setPage}/>
+                        return <ProjectCard key={project.id} project={project} setPage={setPage} posts={posts}/>
                     })
             );
         }
@@ -42,17 +43,17 @@ function HomePage({ setPage }: HomePageProps ) {
             <Hero />
             <div className="posts-head">
                 <div className="tabs" role="tablist" aria-label="Post filters">
-                    <div 
-                        className={`tab  ${isAllPosts ? "active" : ""}`} 
-                        role="tab" 
+                    <div
+                        className={`tab  ${isAllPosts ? "active" : ""}`}
+                        role="tab"
                         aria-selected={isAllPosts}
                         onClick={() => setIsAllPosts(true)}
                     >
                         All Posts
                     </div>
-                    <div 
-                        className={`tab  ${!isAllPosts ? "active" : ""}`} 
-                        role="tab" 
+                    <div
+                        className={`tab  ${!isAllPosts ? "active" : ""}`}
+                        role="tab"
                         aria-selected={!isAllPosts}
                         onClick={() => setIsAllPosts(false)}
                     >

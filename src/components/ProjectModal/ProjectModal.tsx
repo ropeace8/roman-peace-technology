@@ -2,10 +2,7 @@ import { useEffect, type MouseEvent } from "react";
 import { MdClose } from "react-icons/md";
 import type { Post, Project } from "../../model";
 
-
 import PostCard from "../PostCard/PostCard";
-
-import posts from "../../posts/posts.json";
 
 import "./ProjectModal.css";
 
@@ -13,11 +10,10 @@ interface ProjectModalProps {
     project: Project;
     onExit: () => void;
     setPage: (postId: string) => void;
+    posts: Post[];
 }
 
-const allPosts = posts as Post[];
-
-function ProjectModal({ project, onExit, setPage }: ProjectModalProps) {
+function ProjectModal({ project, onExit, setPage, posts }: ProjectModalProps) {
     useEffect(() => {
         const { body } = document;
         const previousOverflow = body.style.overflow;
@@ -28,14 +24,14 @@ function ProjectModal({ project, onExit, setPage }: ProjectModalProps) {
             body.style.overflow = previousOverflow;
         };
     }, []);
-    
+
     const handleBackdropClick = (e: MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget) {
             onExit();
         }
     };
 
-    const postsInProject = allPosts
+    const postsInProject = posts
         .filter(post => project.posts.includes(post.id))
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 

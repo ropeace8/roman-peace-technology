@@ -1,32 +1,52 @@
+import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
 import type { Post } from "../../model";
-import { getThumbnailByFilename, getMarkdownByFilename, renderImage, renderCode } from "./utils";
+import { getMarkdownUrl, getPostThumbnailUrl } from "../../content";
+import { renderImage, renderCode } from "./utils";
 
 import "./BlogPage.css";
 import "./BlogArticle.css"
 
-import posts from "../../posts/posts.json";
-
 interface BlogPageProps {
     postId: string;
     setPage: (postId: string) => void;
+    posts: Post[];
 }
 
-const allPosts = posts as Post[];
+function BlogPage({ postId, setPage, posts }: BlogPageProps) {
+    const [blogMarkdown, setBlogMarkdown] = useState<string | null>(null);
 
-function BlogPage({ postId, setPage }: BlogPageProps) {
     const isAboutPage = postId === "about";
-    const post = !isAboutPage ? allPosts.find((p) => p.id === postId) : undefined;
+    const post = !isAboutPage ? posts.find((p) => p.id === postId) : undefined;
 
     const blogContentFilename = isAboutPage ? "about.md" : `${post?.id}.md`;
-    const blogMarkdown = getMarkdownByFilename(blogContentFilename);
+
+    useEffect(() => {
+        fetch(getMarkdownUrl(blogContentFilename))
+            .then(res => res.text())
+            .then(setBlogMarkdown);
+    }, [blogContentFilename]);
 
     const title = isAboutPage ? "About Roman" : post!.title;
     const thumbnailUrl = !isAboutPage
-        ? getThumbnailByFilename(post!.thumbnail)
+        ? getPostThumbnailUrl(post!.thumbnail)
         : undefined;
+
+    if (blogMarkdown === null) {
+        return (
+            <div className="blog-page">
+                <button
+                    className="blog-back"
+                    onClick={() => setPage("home")}
+                    aria-label="Back to home"
+                >
+                    <IoMdArrowRoundBack className="icon"/>
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="blog-page">
@@ -46,7 +66,7 @@ function BlogPage({ postId, setPage }: BlogPageProps) {
                                 <img src={thumbnailUrl} alt={post.title} />
                             </div>
                         )}
-                        
+
                         <div className="blog-article-header">
                             <div className="blog-article-category">{post.category}</div>
                             <h1 className="blog-article-title">{post.title}</h1>
@@ -61,10 +81,10 @@ function BlogPage({ postId, setPage }: BlogPageProps) {
                     </header>
                 )}
 
-                <div className={`blog-article-body${isAboutPage ? " blog-article-body--about" : ""}`}>
-                    <ReactMarkdown 
-                        components={{ 
-                            img: renderImage, 
+                <div className="blog-article-body">
+                    <ReactMarkdown
+                        components={{
+                            img: renderImage,
                             code: renderCode
                         }}
                     >

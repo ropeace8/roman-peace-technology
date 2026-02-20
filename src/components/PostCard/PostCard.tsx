@@ -1,14 +1,7 @@
 import type { Post } from "../../model";
+import { getPostThumbnailUrl } from "../../content";
 
 import "./PostCard.css";
-
-const postThumbnailImages = import.meta.glob(
-  '../../posts/thumbnails/projects/*',
-  {
-    eager: true,
-    import: 'default'
-  }
-) as Record<string, string>;
 
 interface PostCardProps {
   post: Post;
@@ -16,12 +9,8 @@ interface PostCardProps {
 }
 
 function PostCard({ post, setPage }: PostCardProps) {
-  const thumbnailImage = postThumbnailImages[
-  `../../posts/thumbnails/projects/${post.thumbnail}`
-  ];
-
   return (
-    <a 
+    <a
       className="post-card"
       onClick={(e) => {
         e.preventDefault();
@@ -29,7 +18,7 @@ function PostCard({ post, setPage }: PostCardProps) {
       }}
     >
       <div className="post-thumb">
-        <img src={thumbnailImage} alt={post.title} />
+        <img src={getPostThumbnailUrl(post.thumbnail)} alt={post.title} />
       </div>
       <div className="post-card-body">
         <div className="post-category">{post.category}</div>

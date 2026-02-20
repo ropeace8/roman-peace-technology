@@ -1,39 +1,29 @@
 import { useState } from "react";
 import ProjectModal from "../ProjectModal/ProjectModal";
 
-import type { Project } from "../../model";
+import type { Post, Project } from "../../model";
+import { getProjectThumbnailUrl } from "../../content";
 
 import "./ProjectCard.css";
 
 interface ProjectCardProps {
   project: Project;
   setPage: (postId: string) => void;
+  posts: Post[];
 }
 
-const projectThumbnailImages = import.meta.glob(
-  '../../posts/thumbnails/projects/*',
-  {
-    eager: true,
-    import: 'default'
-  }
-) as Record<string, string>;
-
-function ProjectCard({ project, setPage }: ProjectCardProps) {
+function ProjectCard({ project, setPage, posts }: ProjectCardProps) {
   const [isShowModal, setIsShowModal] = useState(false);
 
   const exitModal = () => {
     setIsShowModal(false);
   }
 
-  const thumbnailImage = projectThumbnailImages[
-  `../../posts/thumbnails/projects/${project.thumbnail}`
-  ];
-
   return (
     <>
       <button className="project-card" onClick={() => setIsShowModal(true)}>
         <div className="project-thumb">
-          <img src={thumbnailImage} alt={project.name} />
+          <img src={getProjectThumbnailUrl(project.thumbnail)} alt={project.name} />
         </div>
         <div className="project-card-body">
           <div className="project-meta">
@@ -44,7 +34,7 @@ function ProjectCard({ project, setPage }: ProjectCardProps) {
         </div>
       </button>
 
-      {isShowModal ? <ProjectModal project={project} onExit={exitModal} setPage={setPage}/> : ""}
+      {isShowModal ? <ProjectModal project={project} onExit={exitModal} setPage={setPage} posts={posts}/> : ""}
     </>
   );
 }

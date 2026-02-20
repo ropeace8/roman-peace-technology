@@ -1,9 +1,0 @@
-[
-    {
-        "id": "placeholder_project",
-        "name": "Placeholder Project",
-        "description": "This is a placeholder project",
-        "posts": ["placeholder_blog_post"],
-        "thumbnail": "test_thumbnail.png"
-    }
-]
